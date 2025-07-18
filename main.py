@@ -38,6 +38,13 @@ def main():
         else:
             print("La configuración para ordenar por precio no está completa en .env. Saltando el ordenamiento.")
 
+        if settings.LIMIT_DROPDOWN_SELECTOR and settings.LIMIT_OPTION_100_TEXT:
+            print(f"Estableciendo el límite de productos a 100 usando la opción: '{settings.LIMIT_OPTION_100_TEXT}'...")
+            brew_coffee_page.select_limit_option(settings.LIMIT_OPTION_100_TEXT)
+            print("Productos por página establecidos")
+        else:
+            print("La configuración para el límite de productos por página no está completa en .env. Saltando el ajuste del límite.")
+
         all_products = brew_coffee_page.get_all_products_info()
         df_all_products = pd.DataFrame(all_products)
         df_all_products = df_all_products.sort_values(by="price").reset_index(drop=True)

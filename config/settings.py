@@ -14,12 +14,22 @@ class Settings:
         self.SORT_DROPDOWN_SELECTOR = os.getenv("SORT_DROPDOWN_SELECTOR")
         if not self.SORT_DROPDOWN_SELECTOR:
             print("Advertencia: SORT_DROPDOWN_SELECTOR no está definido. El ordenamiento no se realizará.")
-            self.SORT_DROPDOWN_SELECTOR = None # Establece a None si no está definido
+            self.SORT_DROPDOWN_SELECTOR = None
 
         self.SORT_OPTION_LOW_TO_HIGH_TEXT = os.getenv("SORT_OPTION_LOW_TO_HIGH_TEXT")
         if not self.SORT_OPTION_LOW_TO_HIGH_TEXT and self.SORT_DROPDOWN_SELECTOR:
             print("Advertencia: SORT_OPTION_LOW_TO_HIGH_TEXT no está definida. El ordenamiento no se realizará.")
             self.SORT_OPTION_LOW_TO_HIGH_TEXT = None
+
+        self.LIMIT_DROPDOWN_SELECTOR = os.getenv("LIMIT_DROPDOWN_SELECTOR")
+        if not self.LIMIT_DROPDOWN_SELECTOR:
+            print("Advertencia: LIMIT_DROPDOWN_SELECTOR no está definido. El ordenamiento no se realizará.")
+            self.LIMIT_DROPDOWN_SELECTOR = None
+
+        self.LIMIT_OPTION_100_TEXT = os.getenv("LIMIT_OPTION_100_TEXT")
+        if not self.LIMIT_OPTION_100_TEXT and self.LIMIT_OPTION_100_TEXT:
+            print("Advertencia: LIMIT_OPTION_100_TEXT no está definida. El ordenamiento no se realizará.")
+            self.LIMIT_OPTION_100_TEXT = None
 
         self.PRODUCT_DIV_SELECTOR = os.getenv("PRODUCT_DIV_SELECTOR")
         if not self.PRODUCT_DIV_SELECTOR:

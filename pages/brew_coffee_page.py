@@ -5,6 +5,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from config.settings import settings
 
+from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support import expected_conditions as EC
+
 class BrewCoffeePage(BasePage):
     def __init__(self, driver):
         super().__init__(driver)
@@ -18,6 +21,11 @@ class BrewCoffeePage(BasePage):
             self.SORT_DROPDOWN = (By.XPATH, settings.SORT_DROPDOWN_SELECTOR)
         else:
             self.SORT_DROPDOWN = (By.CSS_SELECTOR, settings.SORT_DROPDOWN_SELECTOR) if settings.SORT_DROPDOWN_SELECTOR else None
+
+        if settings.LIMIT_DROPDOWN_SELECTOR and ("/" in settings.LIMIT_DROPDOWN_SELECTOR or "[" in settings.LIMIT_DROPDOWN_SELECTOR):
+            self.LIMIT_DROPDOWN = (By.XPATH, settings.LIMIT_DROPDOWN_SELECTOR)
+        else:
+            self.LIMIT_DROPDOWN = (By.CSS_SELECTOR, settings.LIMIT_DROPDOWN_SELECTOR) if settings.LIMIT_DROPDOWN_SELECTOR else None
 
         if settings.PRODUCT_DIV_SELECTOR and ("/" in settings.PRODUCT_DIV_SELECTOR or "[" in settings.PRODUCT_DIV_SELECTOR):
             self.PRODUCT_DIV = (By.XPATH, settings.PRODUCT_DIV_SELECTOR)
@@ -39,10 +47,12 @@ class BrewCoffeePage(BasePage):
             raise ValueError("El selector para el dropdown de ordenar no está configurado.")
         return self.find_element(self.SORT_DROPDOWN)
 
-    def select_sort_option(self, option_text):
-        from selenium.webdriver.support.ui import Select
-        from selenium.webdriver.support import expected_conditions as EC
+    def get_limit_dropdown_element(self):
+        if not self.LIMIT_DROPDOWN or not self.LIMIT_DROPDOWN[1]:
+            raise ValueError("El selector para el dropdown de ordenar no está configurado.")
+        return self.find_element(self.LIMIT_DROPDOWN)
 
+    def select_sort_option(self, option_text):
         try:
             element = self.find_element((By.XPATH, '//*[@id="topOfPage"]/div[6]/div/div[1]/main/div'))
             self.driver.execute_script("arguments[0].scrollIntoView(true);", element)
@@ -62,6 +72,21 @@ class BrewCoffeePage(BasePage):
             print(f"Productos ordenados por '{option_text}'.")
         except Exception as e:
             print(f"No se pudo ordenar los productos: {e}")
+
+    def select_limit_option(self, option_text):
+        try:
+            limit_dropdown = self.get_limit_dropdown_element()
+            time.sleep(1)
+
+            self.driver.execute_script(
+                "arguments[0].value = '100'; arguments[0].dispatchEvent(new Event('change'));",
+                limit_dropdown
+            )
+
+            self.wait.until(EC.presence_of_all_elements_located(self.PRODUCT_DIV))
+            print(f"Productos por página establecidos a '{option_text}'.")
+        except Exception as e:
+            print(f"No se pudo establecer el número de productos por página: {e}")
 
     def get_all_products_info(self):
         self.wait.until(EC.presence_of_all_elements_located(self.PRODUCT_DIV))
