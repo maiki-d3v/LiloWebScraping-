@@ -1,31 +1,44 @@
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
-
 class Settings:
-    # Configuración de la aplicación
-    BASE_URL = os.getenv('BASE_URL', 'https://prima-coffee.com/brew/coffee')
-    MAX_PRODUCTS_TO_SCRAPE = int(os.getenv('MAX_PRODUCTS_TO_SCRAPE', '1000'))
-    CHEAPEST_PRODUCTS_LIMIT = int(os.getenv('CHEAPEST_PRODUCTS_LIMIT', '5'))
-    PRODUCTS_PER_PAGE = int(os.getenv('PRODUCTS_PER_PAGE', '100'))
-    SORT_OPTION = os.getenv('SORT_OPTION', 'Price: Ascending')
+    def __init__(self):
+        load_dotenv()
 
-    # Configuración de Selenium
-    HEADLESS_MODE = os.getenv('HEADLESS_MODE', 'true').lower() == 'true'
-    PAGE_LOAD_TIMEOUT = int(os.getenv('PAGE_LOAD_TIMEOUT', '30'))
-    IMPLICIT_WAIT = int(os.getenv('IMPLICIT_WAIT', '10'))
-    DELAY_BETWEEN_REQUESTS = float(os.getenv('DELAY_BETWEEN_REQUESTS', '2'))
+        self.BASE_URL = os.getenv("BASE_URL")
+        if not self.BASE_URL:
+            raise ValueError("BASE_URL no está definida en el archivo .env")
 
-    # Configuración de salida
-    OUTPUT_DIR = os.getenv('OUTPUT_DIR', 'outputs')
+        self.POPUP_CLOSE_BUTTON_SELECTOR = os.getenv("POPUP_CLOSE_BUTTON_SELECTOR")
 
-    @classmethod
-    def get_output_path(cls, filename):
-        """Obtiene la ruta completa del archivo de salida"""
-        os.makedirs(cls.OUTPUT_DIR, exist_ok=True)
-        return os.path.join(cls.OUTPUT_DIR, filename)
+        self.SORT_DROPDOWN_SELECTOR = os.getenv("SORT_DROPDOWN_SELECTOR")
+        if not self.SORT_DROPDOWN_SELECTOR:
+            print("Advertencia: SORT_DROPDOWN_SELECTOR no está definido. El ordenamiento no se realizará.")
+            self.SORT_DROPDOWN_SELECTOR = None # Establece a None si no está definido
 
+        self.SORT_OPTION_LOW_TO_HIGH_TEXT = os.getenv("SORT_OPTION_LOW_TO_HIGH_TEXT")
+        if not self.SORT_OPTION_LOW_TO_HIGH_TEXT and self.SORT_DROPDOWN_SELECTOR:
+            print("Advertencia: SORT_OPTION_LOW_TO_HIGH_TEXT no está definida. El ordenamiento no se realizará.")
+            self.SORT_OPTION_LOW_TO_HIGH_TEXT = None
 
-# Instancia de configuración
+        self.PRODUCT_DIV_SELECTOR = os.getenv("PRODUCT_DIV_SELECTOR")
+        if not self.PRODUCT_DIV_SELECTOR:
+            raise ValueError("PRODUCT_DIV_SELECTOR no está definida en el archivo .env")
+
+        self.PRODUCT_URL_SELECTOR = os.getenv("PRODUCT_URL_SELECTOR")
+        if not self.PRODUCT_URL_SELECTOR:
+            raise ValueError("PRODUCT_URL_SELECTOR no está definida en el archivo .env")
+
+        self.PRODUCT_TITLE_SELECTOR = os.getenv("PRODUCT_TITLE_SELECTOR")
+        if not self.PRODUCT_TITLE_SELECTOR:
+            raise ValueError("PRODUCT_TITLE_SELECTOR no está definida en el archivo .env")
+
+        self.PRODUCT_PRICE_SELECTOR = os.getenv("PRODUCT_PRICE_SELECTOR")
+        if not self.PRODUCT_PRICE_SELECTOR:
+            raise ValueError("PRODUCT_PRICE_SELECTOR no está definida en el archivo .env")
+
+        self.PRODUCT_IMAGE_SELECTOR = os.getenv("PRODUCT_IMAGE_SELECTOR", "div.product-media__item img")
+        self.PRODUCT_SKU_SELECTOR = os.getenv("PRODUCT_SKU_SELECTOR", "//strong[contains(text(), 'SKU:')]/following-sibling::span")
+        self.PRODUCT_UPC_SELECTOR = os.getenv("PRODUCT_UPC_SELECTOR", "//strong[contains(text(), 'UPC:')]/following-sibling::span")
+
 settings = Settings()
